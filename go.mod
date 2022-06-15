@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.1
+	github.com/khaibin/go-cosinesimilarity v0.0.1
 	gonum.org/v1/gonum v0.11.0
 )
 

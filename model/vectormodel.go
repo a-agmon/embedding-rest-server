@@ -56,7 +56,7 @@ func NewVectorModel(documents map[int][]float64, confidence, regularization floa
 		if i == 0 {
 			vm.nFactors = len(vector)
 		} else if len(vector) != vm.nFactors {
-			return nil, errors.New("Invalid vector size")
+			return nil, errors.New("invalid vector size")
 		}
 		vm.docIndexes[doc] = i
 		vm.docIDs[i] = doc
@@ -109,7 +109,7 @@ func (vm *VectorModel) Recommend(seenDocs map[int]bool, n int) (recommendations 
 func (vm *VectorModel) scoreCandidates(candidates []int, seenDocs map[int]bool) (recommendations []DocumentScore, err error) {
 	confidenceMap := vm.confidenceMap(seenDocs)
 	if len(confidenceMap) == 0 {
-		return nil, fmt.Errorf("No seen doc is in model. History: %d Model: %d",
+		return nil, fmt.Errorf("no seen doc is in model. History: %d Model: %d",
 			len(seenDocs), len(vm.docIndexes))
 	}
 	userVec, err := vm.userVector(confidenceMap)
@@ -205,11 +205,11 @@ func eye(n int, value float64) mat.Matrix {
 	return m
 }
 
-type unsafeSymmetric struct {
-	mat.Dense
-	n int
-}
+// type unsafeSymmetric struct {
+// 	mat.Dense
+// 	n int
+// }
 
-func (s *unsafeSymmetric) Symmetric() int {
-	return s.n
-}
+// func (s *unsafeSymmetric) Symmetric() int {
+// 	return s.n
+// }

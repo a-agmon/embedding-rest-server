@@ -11,6 +11,7 @@ func main() {
 
 	e := gin.New()
 	e.GET("/recommend", GetRecHandler().Recommend)
+	e.GET("/mostsimilar", GetRecHandler().GetMostSimilar)
 	e.GET("/", func(ctx *gin.Context) {
 		log.Println("Get Request:" + ctx.FullPath())
 	})
