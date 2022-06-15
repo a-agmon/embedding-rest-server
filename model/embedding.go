@@ -1,6 +1,7 @@
 package model
 
 import (
+	
 	"encoding/csv"
 	"errors"
 	"io"
@@ -71,6 +72,7 @@ func (e *Embeddings) LoadItems(fileName string) error {
 	e.Items2ID = itemsMap
 	return nil
 }
+
 
 func (e *Embeddings) LoadVectors(factorsFile string, embSize int) error {
 
