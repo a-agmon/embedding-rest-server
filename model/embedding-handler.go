@@ -55,38 +55,24 @@ func (handler *EmbeddingHandler) GetMostSimilar(item string, topk int) ([]string
 	if !ok {
 		return nil, errors.New("the item's id was found but its vector was not - something is very wrong")
 	}
-
-	num_vectors := len(handler.Embedding.Factors)
-	vec_size := len(handler.Embedding.Factors[0])
-
-	v := make([]float64, num_vectors*vec_size)
-	A := mat.NewDense(num_vectors, vec_size, v)
-	for i, vec := range handler.Embedding.Factors {
-		A.SetRow(i, vec)
-	}
+	cosineScores := make([]float64, len(handler.ItemsMatrix))
+	vecSize := len(itemVec)
 
 	time_start := time.Now()
-	b := mat.NewVecDense(vec_size, itemVec)
-	results_arr := make([]float64, num_vectors)
-	results_vec := mat.NewVecDense(num_vectors, results_arr)
-	// this was the method, I was looking for.
-	results_vec.MulVec(A, b)
+	for i, matrixVec := range handler.ItemsMatrix {
+		vectorX := mat.NewDense(vecSize, 1, matrixVec)
+		vectorY := mat.NewDense(vecSize, 1, itemVec)
+		result := Distance(vectorX, vectorY)
+		cosineScores[i] = result
+	}
 	elapsed := time.Since(time_start)
 	log.Printf("Cosine similarity matrix computed in %v", elapsed)
-	//fmt.Printf("Dist:%v\n", results_vec.AtVec(0))
 
-	top_items_k := num_vectors - topk
-	cosine_scores := make([]float64, num_vectors)
-	for i := range cosine_scores {
-		cosine_scores[i] = results_vec.AtVec(i)
-	}
-	sorted_scores := utl.Sort(sort.Float64Slice(cosine_scores))
-	top_items := make([]string, len(sorted_scores[top_items_k:]))
-	for i, itemID := range sorted_scores[top_items_k:] {
+	sorted_scores := utl.Sort(sort.Float64Slice(cosineScores))
+	top_items := make([]string, len(sorted_scores[:topk]))
+	for i, itemID := range sorted_scores[:topk] {
 		top_items[i], _ = handler.Embedding.GetItemNameByID(itemID)
-		log.Printf("Rec Item: %v", top_items[i])
 	}
-	/// --------------
 
 	return top_items, nil
 }
@@ -121,33 +107,23 @@ func (handler *EmbeddingHandler) Recommend(old_items []string) ([]string, []stri
 	return strRecItems, itemsNotfound, nil
 }
 
-func cosine(a []float64, b []float64) (cosine float64, err error) {
-	count := 0
-	length_a := len(a)
-	length_b := len(b)
-	if length_a > length_b {
-		count = length_a
-	} else {
-		count = length_b
-	}
-	sumA := 0.0
-	s1 := 0.0
-	s2 := 0.0
-	for k := 0; k < count; k++ {
-		if k >= length_a {
-			s2 += math.Pow(b[k], 2)
-			continue
-		}
-		if k >= length_b {
-			s1 += math.Pow(a[k], 2)
-			continue
-		}
-		sumA += a[k] * b[k]
-		s1 += math.Pow(a[k], 2)
-		s2 += math.Pow(b[k], 2)
-	}
-	if s1 == 0 || s2 == 0 {
-		return 0.0, errors.New("vectors should not be null (all zeros)")
-	}
-	return sumA / (math.Sqrt(s1) * math.Sqrt(s2)), nil
+// Dot computes dot value of vectorX and vectorY.
+func Dot(vectorX *mat.Dense, vectorY *mat.Dense) float64 {
+	subVector := new(mat.Dense)
+	subVector.MulElem(vectorX, vectorY)
+	result := mat.Sum(subVector)
+
+	return result
+}
+
+// Distance computes Cosine distance.
+// It will return distance which represented as 1-cos() (ranged from 0 to 2).
+func Distance(vectorX *mat.Dense, vectorY *mat.Dense) float64 {
+	dotXY := Dot(vectorX, vectorY)
+	lengthX := math.Sqrt(Dot(vectorX, vectorX))
+	lengthY := math.Sqrt(Dot(vectorY, vectorY))
+
+	cos := dotXY / (lengthX * lengthY)
+
+	return 1 - cos
 }
