@@ -1,0 +1,5 @@
+port: 8080
+host: localhost
+embedding_file: /Users/alonagmon/MyData/work/golang-projects/vectors_model/factors.csv
+items_file: /Users/alonagmon/MyData/work/golang-projects/vectors_model/artists.csv
+embedding_size: 129

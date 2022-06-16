@@ -38,6 +38,8 @@ func NewEmbeddingHandler(factorsFile string, itemsFile string, factorsSize int) 
 		items_matrix[key] = vector
 	}
 
+	log.Printf("Embedding handler created")
+
 	return &EmbeddingHandler{
 		Embedding:   e,
 		VectorModel: m,
