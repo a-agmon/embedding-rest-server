@@ -15,10 +15,9 @@ type ServerConfig struct {
 	EmbeddingSize int    `yaml:"embedding_size"`
 }
 
-func LoadConfig() (*ServerConfig, error) {
+func LoadConfig(configFile string) (*ServerConfig, error) {
 
-	fileName := "server.config.yaml"
-	file, err := ioutil.ReadFile(fileName)
+	file, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("cannot read config file: %v", err)
 	}

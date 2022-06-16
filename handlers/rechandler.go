@@ -4,6 +4,7 @@ import (
 	vm "aagmon/rec-rest-server/model"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,23 @@ func NewRcmndHandler(factors_file string, items_file string, size int) *RcmndHan
 	return &RcmndHandler{
 		EmbeddingHandler: vm.NewEmbeddingHandler(factors_file, items_file, size),
 	}
+}
+
+func (rec *RcmndHandler) GetMostSimilarURL(c *gin.Context) {
+
+	similarto := c.Query("to")
+	topk, _ := strconv.Atoi(c.Query("topk"))
+
+	similar, err := rec.EmbeddingHandler.GetMostSimilar(similarto, topk)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	response := SimilarityRes{
+		Original: similarto,
+		Similar:  similar,
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func (rec *RcmndHandler) GetMostSimilar(c *gin.Context) {

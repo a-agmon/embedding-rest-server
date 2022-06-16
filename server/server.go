@@ -4,13 +4,15 @@ import (
 	"aagmon/rec-rest-server/handlers"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
-	serverConfig, err := LoadConfig()
+	configFile := os.Args[1]
+	serverConfig, err := LoadConfig(configFile)
 	if err != nil {
 		log.Fatalf("cannot load config: %v", err)
 	}
@@ -19,6 +21,7 @@ func main() {
 
 	e := gin.New()
 	e.GET("/recommend", requestHandler.Recommend)
+	e.GET("/similar", requestHandler.GetMostSimilarURL)
 	e.GET("/mostsimilar", requestHandler.GetMostSimilar)
 
 	listenerAddress := fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
