@@ -22,7 +22,6 @@ func main() {
 	e := gin.New()
 	e.GET("/recommend", requestHandler.Recommend)
 	e.GET("/similar", requestHandler.GetMostSimilarURL)
-	e.GET("/mostsimilar", requestHandler.GetMostSimilar)
 
 	listenerAddress := fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
 	log.Fatal(e.Run(listenerAddress))
