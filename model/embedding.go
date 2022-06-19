@@ -96,7 +96,6 @@ func (e *Embeddings) LoadVectors(factorsFile string, embSize int) error {
 		vector_id := int(floatVector[0])
 		vector_data := floatVector[1:]
 		vectorsMap[vector_id] = vector_data
-		//fmt.Printf("ID:%v\nVECTOR:%v\n\n\n", vector_id, vector_data)
 	}
 	e.Factors = vectorsMap
 	return nil
