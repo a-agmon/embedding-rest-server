@@ -42,7 +42,7 @@ The server can be easily compiled as
 go build -o bin/server ./server 
 ```
 
-and then run while pointing to the embedding files 
+and then run while pointing to the config file 
 
 ```bash
 ./bin/server ./bin/server.config.yaml 
