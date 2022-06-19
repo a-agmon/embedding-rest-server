@@ -49,6 +49,14 @@ and then run while pointing to the config file
 ```
 
 Config file should follow this structure
+```yaml
+port: 8080
+host: localhost
+embedding_file: embedding_file.csv
+items_file: item_name_id.csv
+embedding_size: 129
+
+```
 
 The supported strcuture of the embedding file should be in the following CSV format:
 ```csv
